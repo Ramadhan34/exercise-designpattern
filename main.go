@@ -1,10 +1,11 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 )
 
-// IGun interface mendefinisikan metode yang harus dimiliki oleh setiap jenis senjata
+// IGun interface
 type IGun interface {
 	setName(name string)
 	setPower(power int)
@@ -12,7 +13,7 @@ type IGun interface {
 	getPower() int
 }
 
-// Gun adalah struktur dasar yang mengimplementasikan interface IGun
+// Gun struct
 type Gun struct {
 	name  string
 	power int
@@ -34,7 +35,7 @@ func (g *Gun) getPower() int {
 	return g.power
 }
 
-// AK47 adalah jenis senjata yang meng-embed struktur Gun dan secara tidak langsung mengimplementasikan semua metode IGun
+// AK47 struct
 type AK47 struct {
 	Gun
 }
@@ -48,7 +49,7 @@ func newAK47() IGun {
 	}
 }
 
-// Musket adalah jenis senjata lain yang juga meng-embed struktur Gun dan secara tidak langsung mengimplementasikan semua metode IGun
+// Musket struct
 type Musket struct {
 	Gun
 }
@@ -62,7 +63,7 @@ func newMusket() IGun {
 	}
 }
 
-// getGun adalah fungsi factory yang mengembalikan IGun berdasarkan tipe senjata yang diberikan
+// getGun function
 func getGun(gunType string) (IGun, error) {
 	if gunType == "ak47" {
 		return newAK47(), nil
@@ -70,13 +71,21 @@ func getGun(gunType string) (IGun, error) {
 	if gunType == "musket" {
 		return newMusket(), nil
 	}
-	return nil, fmt.Errorf("Wrong gun type passed")
+	return nil, errors.New("Wrong gun type passed")
 }
 
 func main() {
 	// Membuat IGun menggunakan fungsi factory getGun
-	ak47, _ := getGun("ak47")
-	musket, _ := getGun("musket")
+	ak47, err := getGun("ak47")
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	musket, err := getGun("musket")
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
 
 	// Memanggil metode printDetails pada IGun yang dibuat
 	printDetails(ak47)
